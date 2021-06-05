@@ -6,12 +6,13 @@ import java.util.List;
 import com.wemanity.todo_list.entities.Todo;
 import com.wemanity.todo_list.repositories.TodoRepository;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +41,17 @@ public class TodoController {
             }
 
             return new ResponseEntity<>(todos, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/todos")
+    public ResponseEntity<Todo> createTodo(@RequestBody Todo todo) {
+        try {
+            Todo todoEntity = todoRepository
+                    .save(new Todo(todo.getTitle(), todo.getDescription(), false));
+            return new ResponseEntity<>(todoEntity, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
